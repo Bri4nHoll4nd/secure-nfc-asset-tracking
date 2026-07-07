@@ -5,7 +5,7 @@ namespace SecureNfc.Api.Controllers.V1
 {
     [ApiController]
     [Route("api/1.0/[controller]")]
-    public class AssetsController : ControllerBase
+    public class V1AssetsController : ControllerBase
     {
         [HttpGet("GetAll")]
         public IActionResult GetAll()

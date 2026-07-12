@@ -471,5 +471,3 @@ A separate documentation section will be added as development progresses. It is 
 ## Author
 
 Developed by [Bri4nHoll4nd](https://github.com/Bri4nHoll4nd).
-See the [`LICENSE`](LICENSE) file for the terms that apply to this repository.
-

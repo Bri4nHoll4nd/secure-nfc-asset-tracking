@@ -41,7 +41,7 @@ void loop() {
   uint8_t uid[7];
   uint8_t uidLength = 0;
   
-  std::optional<TagUidData> tag = nfcReader.readTag();
+  std::optional<TagUidData> tag = nfcReader.readTagUid();
 
   if (!tag) {
     Serial.println("No tag uid found.");

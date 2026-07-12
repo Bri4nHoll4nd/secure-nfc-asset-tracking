@@ -42,7 +42,7 @@ bool NfcReader::start() {
 }
 
 
-std::optional<TagUidData> NfcReader::readTag() {
+std::optional<TagUidData> NfcReader::readTagUid() {
     uint8_t uid[7] = {0};
     uint8_t uidLength = 0;
     std::string uidString;
@@ -74,6 +74,9 @@ std::optional<TagUidData> NfcReader::readTag() {
     Serial.println("Remove tag...");
     
     return tag;
+}
+
+std::optional<TagReadData> readTagData() {
 }
 
 bool NfcReader::writeStringToTag(
@@ -189,47 +192,120 @@ bool NfcReader::writeSignatureToTag(
 }
 
 bool NfcReader::writeDataToTag(
-            const uint8_t* uid,
-            uint8_t uidLength,
-            const std::string& idValue,
-            const std::string& versionValue,
-            const uint8_t signatureValue[16]) {
+        const uint8_t* uid,
+        uint8_t uidLength,
+        const std::string& idValue,
+        const std::string& versionValue,
+        const uint8_t signatureValue[16]) {
         
-        bool idWritten = writeStringToTag(
-            uid,
-            uidLength,
-            AppConfig::ID_BLOCK,
-            idValue
-        );
+    bool idWritten = writeStringToTag(
+        uid,
+        uidLength,
+        AppConfig::ID_BLOCK,
+        idValue
+    );
 
-        if (!idWritten) {
-            return false;
-        }
-        
-        bool versionWritten = writeStringToTag(
-            uid,
-            uidLength,
-            AppConfig::VERSION_BLOCK,
-            versionValue
-        );
-
-        if (!versionWritten) {
-            return false;
-        }
-
-        bool signatureWritten = writeSignatureToTag(
-            uid,
-            uidLength,
-            AppConfig::SIGNATURE_BLOCK,
-            signatureValue
-        );
-
-        if (!signatureWritten) {
-            return false;
-        }
-
-        return true;
+    if (!idWritten) {
+        return false;
     }
+    
+    bool versionWritten = writeStringToTag(
+        uid,
+        uidLength,
+        AppConfig::VERSION_BLOCK,
+        versionValue
+    );
+
+    if (!versionWritten) {
+        return false;
+    }
+
+    bool signatureWritten = writeSignatureToTag(
+        uid,
+        uidLength,
+        AppConfig::SIGNATURE_BLOCK,
+        signatureValue
+    );
+
+    if (!signatureWritten) {
+        return false;
+    }
+
+    return true;
+}
+
+bool NfcReader::clearBlock(
+        const uint8_t* uid,
+        uint8_t uidLength,
+        uint8_t blockNumber) {
+    
+    uint8_t emptyData[16] = {0};
+
+    bool authenticated = nfc.mifareclassic_AuthenticateBlock(
+        const_cast<uint8_t*>(uid),
+        uidLength,
+        blockNumber,
+        0,
+        AppConfig::DEFAULT_KEY_A
+    );
+
+    if (!authenticated) {
+        Serial.printf(
+            "Authentication failed for block %u\n",
+            blockNumber
+        );
+
+        return false;
+    }
+
+    bool cleared = nfc.mifareclassic_WriteDataBlock(
+        blockNumber,
+        emptyData
+    );
+
+    if (!cleared) {
+        Serial.printf(
+            "Failed to clear block %u\n",
+            blockNumber
+        );
+
+        return false;
+    }
+
+    Serial.printf(
+        "Cleared block %u\n",
+        blockNumber
+    );
+
+    return true;
+}
+
+bool NfcReader::clearTagData(
+        const uint8_t* uid,
+        uint8_t uidLength) {
+    
+    bool idBlockCleared = clearBlock(
+        uid,
+        uidLength,
+        AppConfig::ID_BLOCK
+    );
+
+    bool versionBlockCleared = clearBlock(
+        uid,
+        uidLength,
+        AppConfig::VERSION_BLOCK
+    );
+
+    bool signatureBlockCleared = clearBlock(
+        uid,
+        uidLength,
+        AppConfig::SIGNATURE_BLOCK
+    );
+
+    return idBlockCleared &&
+        versionBlockCleared &&
+        signatureBlockCleared;
+}
 
 std::string NfcReader::uidToString(std::uint8_t* uid, std::uint8_t uidLength) {
     std::ostringstream output;

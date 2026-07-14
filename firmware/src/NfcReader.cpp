@@ -76,7 +76,122 @@ std::optional<TagUidData> NfcReader::readTagUid() {
     return tag;
 }
 
-std::optional<TagReadData> readTagData() {
+bool NfcReader::readRawBlock(
+        const uint8_t* uid,
+        uint8_t uidLength,
+        uint8_t blockNumber,
+        uint8_t output[16]) {
+    
+    bool authenticated = nfc.mifareclassic_AuthenticateBlock(
+        const_cast<uint8_t*>(uid),
+        uidLength,
+        blockNumber,
+        0,
+        AppConfig::DEFAULT_KEY_A
+    );
+
+    if (!authenticated) {
+        Serial.printf(
+            "Authentication failed for block %u\n",
+            blockNumber
+        );
+
+        return false;
+    }
+
+    bool readSuccessful = nfc.mifareclassic_ReadDataBlock(
+        blockNumber,
+        output
+    );
+
+    if (!readSuccessful) {
+        Serial.printf(
+            "Reading block %u failed\n",
+            blockNumber
+        );
+
+        return false;
+    }
+    
+    return true;
+}
+
+bool NfcReader::readStringBlock(
+        const uint8_t* uid,
+        uint8_t uidLength,
+        uint8_t blockNumber,
+        std::string& output) {
+    
+    uint8_t blockData[16]= {0};
+
+    if (!readRawBlock(
+            uid,
+            uidLength,
+            blockNumber,
+            blockData)) {
+
+        return false;
+    }
+    
+    char text[17] = {0};
+
+    std::memcpy(
+        text,
+        blockData,
+        16
+    );
+
+    output = text;
+
+    Serial.printf("Read this string: %s\n", output.c_str());
+
+    return true;
+}
+
+bool NfcReader::readTagData(
+        const uint8_t* uid,
+        uint8_t uidLength,
+        TagReadData& tagData) {
+    
+    tagData.tagUid = uidToString(uid, uidLength);
+    
+    bool idRead = readStringBlock(
+        uid,
+        uidLength,
+        AppConfig::ID_BLOCK,
+        tagData.tagId
+    );
+
+    if (!idRead) {
+        Serial.println("Failed to read id");
+        return false;
+    }
+    
+    bool versionRead = readStringBlock(
+        uid,
+        uidLength,
+        AppConfig::VERSION_BLOCK,
+        tagData.tagVersion
+    );
+
+    if (!versionRead) {
+        Serial.println("Failed to read version");
+        return false;
+    }
+
+    bool signatureRead = readRawBlock(
+        uid,
+        uidLength,
+        AppConfig::SIGNATURE_BLOCK,
+        tagData.tagSignature
+    );
+
+    if (!signatureRead) {
+        Serial.println("Failed to read signature");
+        return false;
+    }
+
+    return true;
 }
 
 bool NfcReader::writeStringToTag(
@@ -84,6 +199,7 @@ bool NfcReader::writeStringToTag(
         uint8_t uidLength,
         uint8_t blockNumber,
         const std::string& value) {
+    
     //String length can't be longer than 15 characters, leaving a byte for '\0'
     if (value.length() > 15) {
         Serial.printf(
@@ -307,7 +423,7 @@ bool NfcReader::clearTagData(
         signatureBlockCleared;
 }
 
-std::string NfcReader::uidToString(std::uint8_t* uid, std::uint8_t uidLength) {
+std::string NfcReader::uidToString(const uint8_t* uid, uint8_t uidLength) {
     std::ostringstream output;
     output << std::hex << std::uppercase << std::setfill('0');
 

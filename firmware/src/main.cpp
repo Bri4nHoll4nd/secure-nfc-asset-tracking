@@ -48,6 +48,18 @@ void loop() {
     return;
   }
 
+  TagReadData tagData;
+  if (nfcReader.readTagData(tag->tagUid, tag->tagUidLength, tagData)) {
+    Serial.println("Data read!");
+  }
+  
+  if (apiManager.sendTagData(tagData)) {
+    Serial.println("Data sent!");
+  }
+
+  delay(2000);
+
+  /*
   uidLength = tag->tagUidLength;
   std::memcpy(uid, tag->tagUid, sizeof(uidLength));
 
@@ -65,8 +77,7 @@ void loop() {
       "Writing test data failed"
     );
   }
-
-  delay(1000);
+  */
 
   /*
   auto tag = nfcReader.readTag();

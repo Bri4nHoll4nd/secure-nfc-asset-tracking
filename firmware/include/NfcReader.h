@@ -16,7 +16,22 @@ class NfcReader {
         //Read tag data and store it
         std::optional<TagUidData> readTagUid();
 
-        std::optional<TagReadData> readTagData();
+        bool readRawBlock(
+            const uint8_t* uid,
+            uint8_t uidLength,
+            uint8_t blockNumber,
+            uint8_t output[16]);
+
+        bool readStringBlock(
+            const uint8_t* uid,
+            uint8_t uidLength,
+            uint8_t blockNumber,
+            std::string& output);
+
+        bool readTagData(
+            const uint8_t* uid,
+            uint8_t uidLength,
+            TagReadData& tagData);
 
         //Write string to tag
         bool writeStringToTag(
@@ -49,5 +64,5 @@ class NfcReader {
             uint8_t uidLength);
 
     private:
-        std::string uidToString(std::uint8_t* uid, std::uint8_t uidLength);
+        std::string uidToString(const uint8_t* uid, uint8_t uidLength);
 };

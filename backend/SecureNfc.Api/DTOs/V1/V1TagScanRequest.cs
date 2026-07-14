@@ -7,5 +7,5 @@ public class V1TagScanRequest
     public required string TagVersion { get; set; }
 
     //A HMAC of the other tag data
-    public required string TagSignature { get; set; }
+    public required List<byte> TagSignature { get; set; } = [];
 }

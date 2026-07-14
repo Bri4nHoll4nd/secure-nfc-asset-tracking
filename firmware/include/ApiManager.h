@@ -9,6 +9,7 @@ class ApiManager {
     public:
         ApiManager(WiFiManager& manager);
         bool sendTagUid(std::string tagUid);
+        bool sendTagData(TagReadData tagData);
         std::optional<TagWriteData> getWriteData();
 
     private:

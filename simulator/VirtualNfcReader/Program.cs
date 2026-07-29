@@ -23,7 +23,8 @@ byte[] fullSignature = hmac.ComputeHash(dataBytes);
 
 byte[] signature = fullSignature[..16];
 
-while (running) {
+while (running) 
+{
     Console.Title = "Virtual NFC Reader";
     Console.WriteLine("Welcome, What would you like to do?");
     Console.WriteLine("");
@@ -37,47 +38,56 @@ while (running) {
 
     var input = Console.ReadLine();
 
-    switch (input) {
-        case "1": {
+    switch (input)
+    {
+        case "1":
+            {
                 await scanOperator();
                 break;
             }
 
-        case "2": {
+        case "2":
+            {
                 await scanAsset();
                 break;
             }
 
-        case "3": {
+        case "3":
+            {
                 await scanOperator();
                 break;
             }
 
-        case "4": {
+        case "4":
+            {
                 await scanAsset();
                 break;
             }
 
-        case "0": {
+        case "0":
+            {
                 Console.WriteLine("Exiting...");
                 running = false;
                 break;
             }
 
-        default: {
+        default:
+            {
                 Console.WriteLine("Wrong/no number entered");
                 break;
             }
     }
 }
 
-async Task scanOperator() {
+async Task scanOperator()
+{
     Console.Clear();
 
     Console.WriteLine("Enter Operator UID:");
     var operatorUid = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(operatorUid)) {
+    if (string.IsNullOrWhiteSpace(operatorUid))
+    {
         Console.WriteLine("No UID entered.");
         return;
     }
@@ -85,7 +95,8 @@ async Task scanOperator() {
     Console.WriteLine("Enter Operator ID:");
     var operatorId = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(operatorId)) {
+    if (string.IsNullOrWhiteSpace(operatorId))
+    {
         Console.WriteLine("No ID entered.");
         return;
     }
@@ -93,7 +104,8 @@ async Task scanOperator() {
     Console.WriteLine("Enter Operator Version:");
     var operatorVersion = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(operatorVersion)) {
+    if (string.IsNullOrWhiteSpace(operatorVersion))
+    {
         Console.WriteLine("No Version entered.");
         return;
     }
@@ -101,7 +113,8 @@ async Task scanOperator() {
     Console.WriteLine("Enter Operator Signature:");
     var operatorSignature = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(operatorSignature)) {
+    if (string.IsNullOrWhiteSpace(operatorSignature))
+    {
         Console.WriteLine("No Signature entered.");
         return;
     }
@@ -115,13 +128,15 @@ async Task scanOperator() {
     Console.ReadKey();
 }
 
-async Task scanAsset() {
+async Task scanAsset()
+{
     Console.Clear();
 
     Console.WriteLine("Enter Asset UID:");
     var assetUid = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(assetUid)) {
+    if (string.IsNullOrWhiteSpace(assetUid))
+    {
         Console.WriteLine("No UID entered.");
         return;
     }
@@ -129,7 +144,8 @@ async Task scanAsset() {
     Console.WriteLine("Enter Asset ID:");
     var assetId = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(assetId)) {
+    if (string.IsNullOrWhiteSpace(assetId))
+    {
         Console.WriteLine("No ID entered.");
         return;
     }
@@ -137,7 +153,8 @@ async Task scanAsset() {
     Console.WriteLine("Enter Asset Version:");
     var assetVersion = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(assetVersion)) {
+    if (string.IsNullOrWhiteSpace(assetVersion))
+    {
         Console.WriteLine("No Version entered.");
         return;
     }
@@ -145,7 +162,8 @@ async Task scanAsset() {
     Console.WriteLine("Enter Asset Signature:");
     var assetSignature = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(assetSignature)) {
+    if (string.IsNullOrWhiteSpace(assetSignature))
+    {
         Console.WriteLine("No Signature entered.");
         return;
     }
@@ -159,8 +177,10 @@ async Task scanAsset() {
     Console.ReadKey();
 }
 
-async Task SendScan(string tagUid, string tagId, string tagVersion, string tagSignature) {
-    if (string.IsNullOrWhiteSpace(tagUid)) {
+async Task SendScan(string tagUid, string tagId, string tagVersion, string tagSignature)
+{
+    if (string.IsNullOrWhiteSpace(tagUid))
+    {
         Console.WriteLine("No UID entered.");
         return;
     }
@@ -175,7 +195,8 @@ async Task SendScan(string tagUid, string tagId, string tagVersion, string tagSi
 
     using HttpClient httpClient = new HttpClient();
 
-    try {
+    try
+    {
         var response = await httpClient.PostAsJsonAsync(
             "http://localhost:5201/api/1.0/V1Scans",
             scanRequest
@@ -188,7 +209,8 @@ async Task SendScan(string tagUid, string tagId, string tagVersion, string tagSi
         Console.WriteLine("Response body: ");
         Console.WriteLine(string.IsNullOrWhiteSpace(responseText) ? "<empty>" : responseText);
     }
-    catch (Exception e) {
+    catch (Exception e)
+    {
         Console.WriteLine("Request failed:");
         Console.WriteLine($"{e.Message}");
     }

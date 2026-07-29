@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: basic-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: tagdb
+      POSTGRES_USER: basicuser
+      POSTGRES_PASSWORD: development_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data: 

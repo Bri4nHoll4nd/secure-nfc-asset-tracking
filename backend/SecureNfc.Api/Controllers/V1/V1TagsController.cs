@@ -1,9 +1,9 @@
 using SecureNfc.Data;
-using SecureNfc.Data.Models;
+using SecureNfc.Data.Models.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace SecureNfc.Data.Controllers;
+namespace SecureNfc.Data.Controllers.V1;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -17,7 +17,7 @@ public class V1TagsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Tag>>> GetAll()
+    public async Task<ActionResult<List<V1Tag>>> GetAll()
     {
         var tags = await _dbContext.Tags
             .AsNoTracking() //Uses less memory because it doesnt need to keep track of changes when its just a get command
@@ -28,7 +28,7 @@ public class V1TagsController : ControllerBase
     }
 
     [HttpGet("{entityCode}")]
-    public async Task<ActionResult<Tag>> GetByEntityCode(string entityCode)
+    public async Task<ActionResult<V1Tag>> GetByEntityCode(string entityCode)
     {
         var tag = await _dbContext.Tags
             .AsNoTracking()
@@ -43,9 +43,9 @@ public class V1TagsController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(Tag), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(V1Tag), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Tag>> Create(Tag tag)
+    public async Task<ActionResult<V1Tag>> Create(V1Tag tag)
     {
         bool entityCodeExists = await _dbContext.Tags
             .AnyAsync(t => t.EntityCode == tag.EntityCode);
@@ -69,7 +69,7 @@ public class V1TagsController : ControllerBase
     [HttpPut("{entityCode}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(string entityCode, Tag updatedTag)
+    public async Task<IActionResult> Update(string entityCode, V1Tag updatedTag)
     {
         var existingTag = await _dbContext.Tags.FirstOrDefaultAsync(tag => tag.EntityCode == entityCode);
 

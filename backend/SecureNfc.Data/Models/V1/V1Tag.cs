@@ -1,6 +1,6 @@
-namespace SecureNfc.Data.Models;
+namespace SecureNfc.Data.Models.V1;
 
-public class Tag 
+public class V1Tag 
 {
     public int Id { get; set; }
     public required string Uid { get; set; }

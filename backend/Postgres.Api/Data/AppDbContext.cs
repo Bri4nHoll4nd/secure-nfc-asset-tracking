@@ -10,4 +10,11 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Tag> Tags => Set<Tag>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Tag>()
+            .HasIndex(t => t.EntityCode)
+            .IsUnique();
+    }
 }

@@ -2,18 +2,18 @@
 
 #nullable disable
 
-namespace Postgres.Api.Migrations
+namespace SecureNfc.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class MakeECUniqueRetry : Migration
+    public partial class AddedUidAsUnique : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_EntityCode",
+                name: "IX_Tags_Uid",
                 table: "Tags",
-                column: "EntityCode",
+                column: "Uid",
                 unique: true);
         }
 
@@ -21,7 +21,7 @@ namespace Postgres.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "IX_Tags_EntityCode",
+                name: "IX_Tags_Uid",
                 table: "Tags");
         }
     }

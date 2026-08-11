@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Postgres.Api.Migrations
+namespace SecureNfc.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -29,6 +29,12 @@ namespace Postgres.Api.Migrations
                 {
                     table.PrimaryKey("PK_Tags", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_EntityCode",
+                table: "Tags",
+                column: "EntityCode",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -3,30 +3,27 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Postgres.Api.Data;
+using SecureNfc.Data;
 
 #nullable disable
 
-namespace Postgres.Api.Migrations
+namespace SecureNfc.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260811183154_MakeECUniqueRetry")]
-    partial class MakeECUniqueRetry
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Postgres.Api.Models.Tag", b =>
+            modelBuilder.Entity("SecureNfc.Data.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,6 +53,9 @@ namespace Postgres.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EntityCode")
+                        .IsUnique();
+
+                    b.HasIndex("Uid")
                         .IsUnique();
 
                     b.ToTable("Tags");

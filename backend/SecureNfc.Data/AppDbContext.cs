@@ -1,7 +1,7 @@
-using Postgres.Api.Models;
+using SecureNfc.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Postgres.Api.Data;
+namespace SecureNfc.Data;
 
 public class AppDbContext : DbContext 
 {
@@ -13,6 +13,10 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Tag>()
+            .HasIndex(t => t.Uid)
+            .IsUnique();
+
         modelBuilder.Entity<Tag>()
             .HasIndex(t => t.EntityCode)
             .IsUnique();

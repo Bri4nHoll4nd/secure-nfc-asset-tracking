@@ -1,4 +1,4 @@
-namespace Postgres.Api.Models;
+namespace SecureNfc.Data.Models;
 
 public class Tag 
 {

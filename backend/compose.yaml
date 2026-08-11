@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: tagdb
+      POSTGRES_DB: secure_nfc_db
       POSTGRES_USER: basicuser
       POSTGRES_PASSWORD: development_password
 

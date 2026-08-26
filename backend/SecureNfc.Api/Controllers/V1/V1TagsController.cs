@@ -28,11 +28,11 @@ public class V1TagsController : ControllerBase
     }
 
     [HttpGet("{entityCode}")]
-    public async Task<ActionResult<V1Tag>> GetByEntityCode(string entityCode)
+    public async Task<ActionResult<V1Tag>> GetByEntityCode(string uid)
     {
         var tag = await _dbContext.Tags
             .AsNoTracking()
-            .FirstOrDefaultAsync(tag => tag.EntityCode == entityCode);
+            .FirstOrDefaultAsync(tag => tag.Uid == uid);
 
         if (tag is null)
         {
@@ -48,7 +48,7 @@ public class V1TagsController : ControllerBase
     public async Task<ActionResult<V1Tag>> Create(V1Tag tag)
     {
         bool entityCodeExists = await _dbContext.Tags
-            .AnyAsync(t => t.EntityCode == tag.EntityCode);
+            .AnyAsync(t => t.Uid == tag.Uid);
 
         if (entityCodeExists)
         {
@@ -69,16 +69,15 @@ public class V1TagsController : ControllerBase
     [HttpPut("{entityCode}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(string entityCode, V1Tag updatedTag)
+    public async Task<IActionResult> Update(string uid, V1Tag updatedTag)
     {
-        var existingTag = await _dbContext.Tags.FirstOrDefaultAsync(tag => tag.EntityCode == entityCode);
+        var existingTag = await _dbContext.Tags.FirstOrDefaultAsync(tag => tag.Uid == uid);
 
         if (existingTag is null)
         {
             return NotFound();
         }
 
-        existingTag.Uid = updatedTag.Uid;
         existingTag.Version = updatedTag.Version;
         existingTag.Signature = updatedTag.Signature;
 
@@ -90,9 +89,9 @@ public class V1TagsController : ControllerBase
     [HttpDelete("{entityCode}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(string entityCode)
+    public async Task<IActionResult> Delete(string uid)
     {
-        var tag = await _dbContext.Tags.FirstOrDefaultAsync(tag => tag.EntityCode == entityCode);
+        var tag = await _dbContext.Tags.FirstOrDefaultAsync(tag => tag.Uid == uid);
 
         if (tag is null)
         {

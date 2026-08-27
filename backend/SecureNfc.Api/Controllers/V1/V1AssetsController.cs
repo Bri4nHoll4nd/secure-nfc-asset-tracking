@@ -1,5 +1,7 @@
+using SecureNfc.Data;
+using SecureNfc.Data.Models.V1;
 using Microsoft.AspNetCore.Mvc;
-using SecureNfc.Api.Models.V1;
+using Microsoft.EntityFrameworkCore;
 
 namespace SecureNfc.Api.Controllers.V1;
 
@@ -7,23 +9,79 @@ namespace SecureNfc.Api.Controllers.V1;
 [Route("api/1.0/[controller]")]
 public class V1AssetsController : ControllerBase 
 {
-    [HttpGet("GetAll")]
-    public IActionResult GetAll() 
+    private readonly AppDbContext _dbContext;
+
+    public V1AssetsController(AppDbContext dbContext)
     {
-        var assets = new List<V1Asset> 
-        {
-            new V1Asset { Id = "A01-23", Name = "Laptop", Status = "Active", MaintenanceStatus = "Not needed", CurrentHolderId = "AP2-34"},
-            new V1Asset { Id = "A01-24", Name = "Projector", Status = "Active", MaintenanceStatus = "Not needed", CurrentHolderId = "AP2-35"}
-        };
+        _dbContext = dbContext;
+    }
+
+    [HttpGet("GetAll")]
+    public async Task<ActionResult<List<V1Asset>>> GetAll() 
+    {
+        var assets = await _dbContext.Assets
+            .AsNoTracking()
+            .OrderBy(assets => assets.Id)
+            .ToListAsync();
 
         return Ok(assets);
     }
 
-    //[HttpGet("{tagUid}")]
-    //public IActionResult GetAsset(string tagUid)
-    //{
-    //}
+    [HttpGet("{entityCode}")]
+    public async Task<ActionResult<V1Asset>> GetByEntityCode(string entityCode)
+    {
+        var asset = await _dbContext.Assets
+            .AsNoTracking()
+            .FirstOrDefaultAsync(asset => asset.EntityCode == entityCode);
 
-    //[HttpPost("Create")]
-    //public
+        if (asset is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(asset);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(V1Asset), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<V1Asset>> Create(V1Asset asset)
+    {
+        bool entityCodeExists = await _dbContext.Assets
+            .AnyAsync(a => a.EntityCode == asset.EntityCode);
+
+        if (entityCodeExists)
+        {
+            return Conflict("A tag with this EntityCode already exists.");
+        }
+
+        _dbContext.Add(asset);
+        await _dbContext.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetByEntityCode),
+            new { EntityCode = asset.EntityCode },
+            asset);
+    }
+
+    [HttpPut("{entityCode}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(string entityCode, V1Asset updatedAsset)
+    {
+        var existingAsset = await _dbContext.Assets.FirstOrDefaultAsync(asset => asset.EntityCode == entityCode);
+
+        if (existingAsset is null)
+        {
+            return NotFound();
+        }
+
+        existingAsset.Name = updatedAsset.Name;
+        existingAsset.Status = updatedAsset.Status;
+        existingAsset.MaintenanceStatus = updatedAsset.MaintenanceStatus;
+
+        await _dbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

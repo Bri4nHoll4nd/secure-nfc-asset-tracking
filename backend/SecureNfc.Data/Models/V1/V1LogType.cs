@@ -1,6 +1,6 @@
 namespace SecureNfc.Data.Models.V1;
 
-public enum AssetLogType
+public enum LogType
 {
     Created = 0,
     CheckedOut = 1,

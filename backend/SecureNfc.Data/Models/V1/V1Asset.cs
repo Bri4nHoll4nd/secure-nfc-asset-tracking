@@ -10,7 +10,7 @@ public class V1Asset
 
     public V1Tag? Tag { get; set; }
 
-    public List<V1AssetLog> Logs { get; set; } = [];
+    public List<V1Log> Logs { get; set; } = [];
 
     public int? UserId { get; set; }
     public V1User? User { get; set; }

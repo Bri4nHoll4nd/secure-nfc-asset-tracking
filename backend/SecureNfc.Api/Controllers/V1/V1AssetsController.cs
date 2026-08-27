@@ -79,5 +79,9 @@ public class V1AssetsController : ControllerBase
         existingAsset.Name = updatedAsset.Name;
         existingAsset.Status = updatedAsset.Status;
         existingAsset.MaintenanceStatus = updatedAsset.MaintenanceStatus;
+
+        await _dbContext.SaveChangesAsync();
+
+        return NoContent();
     }
 }

@@ -8,7 +8,7 @@ namespace SecureNfc.Api.Controllers.V1;
 public class V1ScansController : ControllerBase
 {
     [HttpPost("ScanTag")]
-    public IActionResult ReceiveScan(V1TagScanRequest request)
+    public IActionResult ScanData(V1TagScanRequest request)
     {
         Console.WriteLine("Scan received: ");
         Console.WriteLine($"Tag UID: {request.TagUid}");
@@ -27,7 +27,7 @@ public class V1ScansController : ControllerBase
     }
 
     [HttpPost("ScanTagUid")]
-    public IActionResult Scan(V1TagUidScanRequest request)
+    public IActionResult ScanUid(V1TagUidScanRequest request)
     {
         Console.WriteLine($"Recived tag: {request.TagUid}");
 

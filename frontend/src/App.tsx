@@ -1,40 +1,122 @@
-import { useState } from "react";
-import { getApiStatus } from "./api/apiClient";
+import { useEffect, useState } from "react";
+
+import {
+    getApiStatus,
+    getLatestScan,
+    type ScanResult
+} from "./api/apiClient"
 
 import './App.css'
 
 function App() {
-    const [status, setStatus] = useState<string>("Not checked");
-    const [isLoading, setIsLoading] = useState(false);
+    const [apiStatus, setApiStatus] = useState<string>("Checking...");
 
-    async function checkApi() {
-        try {
-            setIsLoading(true);
-            setStatus("Checking...");
+    const [latestScan, setLatestScan] = useState<ScanResult | null>(null);
 
-            const result = await getApiStatus();
-            setStatus(result);
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Unkown error";
+    const [scanError, setScanError] = useState<string | null>(null);
 
-            setStatus(`Connection failed: ${message}`);
-        } finally {
-            setIsLoading(false);
+    useEffect(() => {
+        async function checkApi() {
+            try {
+                const result = await getApiStatus();
+                setApiStatus(result);
+            } catch {
+                setApiStatus("Disconnected");
+            }
         }
-    }
+
+        checkApi();
+    }, []);
+
+    useEffect(() => {
+        async function updateLatestScan() {
+            try {
+                const scan = await getLatestScan();
+
+                setLatestScan(scan);
+                setScanError(null);
+            } catch (error) {
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : "Unknown error";
+
+                setScanError(message);
+            }
+        }
+
+        updateLatestScan();
+
+        const interval = window.setInterval(
+            updateLatestScan,
+            1000
+        );
+
+        return () => {
+            window.clearInterval(interval);
+        };
+    }, []);
 
     return (
-        <main>
-            <h1>Secure NFC Asset Tracking</h1>
+        <main className="dashboard">
+            <header>
+                <h1>Secure NFC Asset Tracking</h1>
+                <p className="subtitle">
+                    NFC reader development dashboard
+                </p>
+            </header>
 
-            <section>
+            <section className="card">
                 <h2>System status</h2>
+                <div className="status-row">
+                    <span>API</span>
+                    <strong>
+                        {apiStatus}
+                    </strong>
+                </div>
+            </section>
 
-                <p>API: {status}</p>
+            <section className="card scan-card">
+                <h2>Latest NFC scan</h2>
+                
+                {scanError && (
+                    <p className="error">
+                        {scanError}
+                    </p>
+                )}
 
-                <button onClick={checkApi} disabled={isLoading}>
-                    {isLoading ? "Checking..." : "Check API connection"}
-                </button>
+                {!latestScan && !scanError && (
+                    <p className="waiting">
+                        Waiting for NFC tag...
+                    </p>
+                )}
+
+                {latestScan && (
+                    <div className="scan-data">
+                        <div>
+                            <span>UID</span>
+                            <strong>
+                                {latestScan.tagUid}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Source</span>
+                            <strong>
+                                {latestScan.source}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Scanned</span>
+                            <strong>
+                                {new Date(
+                                    latestScan.scannedAtUtc
+                                ).toLocaleString()}
+                            </strong>
+                        </div>
+                    </div>
+                )}
             </section>
         </main>
     );

@@ -9,6 +9,7 @@ namespace SecureNfc.Api.Controllers.V1;
 [Route("api/1.0/[controller]")]
 public class V1AssetsController : ControllerBase 
 {
+    /*
     private readonly AppDbContext _dbContext;
 
     public V1AssetsController(AppDbContext dbContext)
@@ -84,4 +85,5 @@ public class V1AssetsController : ControllerBase
 
         return NoContent();
     }
+    */
 }

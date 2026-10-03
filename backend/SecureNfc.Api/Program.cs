@@ -1,5 +1,6 @@
 using SecureNfc.Data;
 using Microsoft.EntityFrameworkCore;
+using SecureNfc.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<LatestScanService>();
 
 builder.Services.AddCors(options => 
 {

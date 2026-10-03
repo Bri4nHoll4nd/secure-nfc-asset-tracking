@@ -27,12 +27,12 @@ public class V1AssetsController : ControllerBase
         return Ok(assets);
     }
 
-    [HttpGet("{entityCode}")]
-    public async Task<ActionResult<V1Asset>> GetByEntityCode(string entityCode)
+    [HttpGet("GetById/{id}")]
+    public async Task<ActionResult<V1Asset>> GetById(int id)
     {
         var asset = await _dbContext.Assets
             .AsNoTracking()
-            .FirstOrDefaultAsync(asset => asset.EntityCode == entityCode);
+            .FirstOrDefaultAsync(asset => asset.id == id);
 
         if (asset is null)
         {
@@ -64,12 +64,12 @@ public class V1AssetsController : ControllerBase
             asset);
     }
 
-    [HttpPut("{entityCode}")]
+    [HttpPut("Update/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(string entityCode, V1Asset updatedAsset)
+    public async Task<IActionResult> Update(int id, V1Asset updatedAsset)
     {
-        var existingAsset = await _dbContext.Assets.FirstOrDefaultAsync(asset => asset.EntityCode == entityCode);
+        var existingAsset = await _dbContext.Assets.FirstOrDefaultAsync(asset => asset.Id == id);
 
         if (existingAsset is null)
         {

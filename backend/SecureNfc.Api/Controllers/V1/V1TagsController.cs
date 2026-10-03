@@ -16,7 +16,7 @@ public class V1TagsController : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet]
+    [HttpGet("GetAll")]
     public async Task<ActionResult<List<V1Tag>>> GetAll()
     {
         var tags = await _dbContext.Tags
@@ -27,7 +27,7 @@ public class V1TagsController : ControllerBase
         return Ok(tags);
     }
 
-    [HttpGet("{uid}")]
+    [HttpGet("GetByUid/{uid}")]
     public async Task<ActionResult<V1Tag>> GetByUid(string uid)
     {
         var tag = await _dbContext.Tags
@@ -42,7 +42,7 @@ public class V1TagsController : ControllerBase
         return Ok(tag);
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     [ProducesResponseType(typeof(V1Tag), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<V1Tag>> Create(V1Tag tag)
@@ -66,7 +66,7 @@ public class V1TagsController : ControllerBase
             tag);
     }
 
-    [HttpPut("{uid}")]
+    [HttpPut("Update/{uid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(string uid, V1Tag updatedTag)
@@ -87,7 +87,7 @@ public class V1TagsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{uid}")]
+    [HttpDelete("Delete/{uid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(string uid)

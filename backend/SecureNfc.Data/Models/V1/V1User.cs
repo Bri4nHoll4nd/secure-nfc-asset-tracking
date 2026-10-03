@@ -3,7 +3,6 @@ namespace SecureNfc.Data.Models.V1;
 public class V1User
 {
     public int Id { get; set; }
-    public required string EntityCode { get; set; }
     public required string Name { get; set; }
     public required string Status { get; set; }
 

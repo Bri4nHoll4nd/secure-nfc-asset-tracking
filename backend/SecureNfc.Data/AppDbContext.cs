@@ -27,10 +27,6 @@ public class AppDbContext : DbContext
                 NOT ("AssetId" IS NOT NULL AND "UserId" IS NOT NULL)
                 """
             ));
-                
-        modelBuilder.Entity<V1Asset>()
-            .HasIndex(a => a.EntityCode)
-            .IsUnique();
 
         modelBuilder.Entity<V1Asset>()
             .HasOne(a => a.Tag)

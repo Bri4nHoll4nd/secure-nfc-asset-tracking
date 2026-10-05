@@ -1,6 +1,7 @@
 using SecureNfc.Data;
 using Microsoft.EntityFrameworkCore;
 using SecureNfc.Api.Services;
+using SecureNfc.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +11,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddSingleton<LatestScanService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<LatestScanService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options => 
 {
@@ -22,7 +26,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -39,5 +44,7 @@ app.UseCors("Frontend");
 
 //app.UseHttpsRedirection();
 app.MapControllers();
+
+app.MapHub<ScanHub>("/hubs/scans");
 
 app.Run();

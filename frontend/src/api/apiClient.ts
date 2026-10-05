@@ -1,9 +1,25 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5201";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5201";
 
 export interface ScanResult {
     tagUid: string;
     source: string;
-    scannedAtUtc: string
+    scannedAtUtc: string;
+
+    registered: boolean;
+
+    tagId: number | null;
+
+    entityType:
+        | "Asset"
+        | "User"
+        | "Unassigned"
+        | "Unknown";
+
+    entityId: number | null;
+
+    name: string | null;
+
+    status: string | null;
 }
 
 export async function getApiStatus(): Promise<string> {

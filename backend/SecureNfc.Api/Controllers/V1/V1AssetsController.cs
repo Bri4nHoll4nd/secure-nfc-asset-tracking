@@ -2,6 +2,7 @@ using SecureNfc.Data;
 using SecureNfc.Data.Models.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SecureNfc.Api.DTOs;
 
 namespace SecureNfc.Api.Controllers.V1;
 
@@ -9,7 +10,6 @@ namespace SecureNfc.Api.Controllers.V1;
 [Route("api/1.0/[controller]")]
 public class V1AssetsController : ControllerBase 
 {
-    /*
     private readonly AppDbContext _dbContext;
 
     public V1AssetsController(AppDbContext dbContext)
@@ -17,23 +17,23 @@ public class V1AssetsController : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet("GetAll")]
-    public async Task<ActionResult<List<V1Asset>>> GetAll() 
+    [HttpGet]
+    public async Task<ActionResult<List<V1Asset>>> GetAll()
     {
         var assets = await _dbContext.Assets
             .AsNoTracking()
-            .OrderBy(assets => assets.Id)
+            .OrderBy(asset => asset.Id)
             .ToListAsync();
 
         return Ok(assets);
     }
 
-    [HttpGet("GetById/{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<V1Asset>> GetById(int id)
     {
         var asset = await _dbContext.Assets
             .AsNoTracking()
-            .FirstOrDefaultAsync(asset => asset.id == id);
+            .FirstOrDefaultAsync(asset => asset.Id == id);
 
         if (asset is null)
         {
@@ -44,46 +44,45 @@ public class V1AssetsController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(V1Asset), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<V1Asset>> Create(V1Asset asset)
+    public async Task<ActionResult<V1Asset>> Create(
+        V1AssetCreateRequest request)
     {
-        bool entityCodeExists = await _dbContext.Assets
-            .AnyAsync(a => a.EntityCode == asset.EntityCode);
-
-        if (entityCodeExists)
+        if (string.IsNullOrWhiteSpace(request.Name))
         {
-            return Conflict("A tag with this EntityCode already exists.");
+            return BadRequest("Asset name is required.");
         }
 
-        _dbContext.Add(asset);
+        if (request.UserId is not null)
+        {
+            bool userExists = await _dbContext.Users
+                .AnyAsync(user =>
+                    user.Id == request.UserId);
+
+            if (!userExists)
+            {
+                return BadRequest(
+                    $"User {request.UserId} does not exist.");
+            }
+        }
+
+        var asset = new V1Asset
+        {
+            Name = request.Name.Trim(),
+            Description = request.Description.Trim(),
+            Status = request.Status.Trim(),
+            MaintenanceStatus =
+                request.MaintenanceStatus.Trim(),
+
+            UserId = request.UserId
+        };
+
+        _dbContext.Assets.Add(asset);
+
         await _dbContext.SaveChangesAsync();
 
         return CreatedAtAction(
-            nameof(GetByEntityCode),
-            new { EntityCode = asset.EntityCode },
+            nameof(GetById),
+            new { id = asset.Id },
             asset);
     }
-
-    [HttpPut("Update/{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, V1Asset updatedAsset)
-    {
-        var existingAsset = await _dbContext.Assets.FirstOrDefaultAsync(asset => asset.Id == id);
-
-        if (existingAsset is null)
-        {
-            return NotFound();
-        }
-
-        existingAsset.Name = updatedAsset.Name;
-        existingAsset.Status = updatedAsset.Status;
-        existingAsset.MaintenanceStatus = updatedAsset.MaintenanceStatus;
-
-        await _dbContext.SaveChangesAsync();
-
-        return NoContent();
-    }
-    */
 }

@@ -1,0 +1,28 @@
+.admin-header {
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background-color: #000000;
+  border-bottom: 1px solid #292929;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-profile-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.admin-profile svg {
+  color: #ffffff;
+}

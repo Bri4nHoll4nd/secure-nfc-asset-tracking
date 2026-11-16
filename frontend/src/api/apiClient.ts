@@ -1,49 +1,69 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5201";
+import { matchRoutes } from "react-router-dom";
 
-export interface ScanResult {
-    tagUid: string;
-    source: string;
-    scannedAtUtc: string;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5201";
 
-    registered: boolean;
+async function request<T>(
+    endpoint: string,
+    options?: RequestInit
+): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options?.headers,
+        },
+    });
 
-    tagId: number | null;
-
-    entityType:
-        | "Asset"
-        | "User"
-        | "Unassigned"
-        | "Unknown";
-
-    entityId: number | null;
-
-    name: string | null;
-
-    status: string | null;
-}
-
-export async function getApiStatus(): Promise<string> {
-    const response = await fetch(`${API_BASE_URL}/api/1.0/V1Status`);
+    const text = await response.text();
 
     if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
+        let message = `API error ${response.status}`;
+
+        if (text) {
+            try {
+                const data = JSON.parse(text);
+                message =
+                    data.message ??
+                    data.title ??
+                    data.detail ??
+                    text;
+            } catch {
+                message = text;
+            }
+        }
+
+        throw new Error(message);
     }
 
-    return response.text();
+    if (!text) {
+        return undefined as T;
+    }
+
+    return JSON.parse(text) as T;
 }
 
-export async function getLatestScan(): Promise<ScanResult | null> {
-    const response = await fetch(`${API_BASE_URL}/api/1.0/V1Scans/latest`);
+export const apiClient = {
+    get<T>(endpoint: string) {
+        return request<T>(endpoint);
+    },
 
-    if (response.status === 204) {
-        return null;
-    }
+    post<T>(endpoint: string, body: unknown) {
+        return request<T>(endpoint, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    },
 
-    if (!response.ok) {
-        throw new Error(
-            `API request failed: ${response.status}`
-        );
-    }
+    put<T>(endpoint: string, body: unknown) {
+        return request<T>(endpoint, {
+            method: "PUT",
+            body: JSON.stringify(body),
+        });
+    },
 
-    return response.json();
-}
+    delete<T>(endpoint: string) {
+        return request<T>(endpoint, {
+            method: "DELETE",
+        });
+    },
+};

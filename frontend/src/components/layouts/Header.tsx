@@ -4,7 +4,7 @@ import "./Header.css";
 export default function Header() {
     // Temp until login is implemented
     const user = {
-        name: "Ola"
+        name: "Ola Nordmann"
     }
 
     return (

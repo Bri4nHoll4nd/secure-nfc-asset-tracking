@@ -14,6 +14,9 @@ public class AppDbContext : DbContext
     public DbSet<V1User> Users => Set<V1User>();
     public DbSet<V1Log> Logs => Set<V1Log>();
 
+    public DbSet<V1AssetRegistration> AssetRegistrations
+        => Set<V1AssetRegistration>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<V1Tag>()
@@ -52,5 +55,16 @@ public class AppDbContext : DbContext
             .HasMany(u => u.AssetLogs)
             .WithOne(l => l.User)
             .HasForeignKey(l => l.UserId);
+
+        modelBuilder.Entity<V1AssetRegistration>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+
+            entity.Property(r => r.RegistrationStatus)
+                .HasConversion<string>();
+
+            entity.HasIndex(r => r.ReaderId);
+            entity.HasIndex(r => r.Uid);
+        });
     }
 }

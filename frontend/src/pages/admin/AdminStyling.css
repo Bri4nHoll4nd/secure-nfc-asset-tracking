@@ -116,6 +116,81 @@
   color: #b91c1c;
 }
 
+.nfc-registration {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.nfc-registration-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.nfc-registration-header p {
+  margin: 6px 0 20px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.nfc-registration-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.nfc-registration-content p {
+  font-size: 14px;
+}
+
+.nfc-status {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.nfc-status strong {
+  font-size: 14px;
+}
+
+.nfc-status p {
+  margin: 8px 0 0;
+}
+
+.nfc-status.waiting {
+  background: #f8fafc;
+}
+
+.nfc-status.success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.nfc-status.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.admin-secondary-button {
+  padding: 9px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 @media (max-width: 750px) {
   .admin-form-grid {
     grid-template-columns: 1fr;

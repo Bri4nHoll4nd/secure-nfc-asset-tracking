@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { assetsApi } from "../../api/assetsApi";
 
-import "./Assets.css";
+import "./AdminStyling.css";
+import NfcRegistration from "../../components/admin/NfcRegistration";
 
 export default function Assets() {
     const [name, setName] = useState("");
@@ -133,15 +134,15 @@ export default function Assets() {
                         <p className="admin-form-message success">{message}</p>
                     )}
 
-                    <div className="admin-form-actions">
-                        <button
-                            className="admin-primary-button"
-                            type="submit"
-                            disabled={saving || !isFormValid} 
-                        >
-                            {saving ? "Creating..." : "Create asset"}
-                        </button>    
-                    </div>
+                    <NfcRegistration
+                        asset={{
+                            name: name.trim(),
+                            description: description.trim(),
+                            status,
+                            maintenanceStatus,
+                        }}
+                        isFormValid={isFormValid}
+                    />
                 </form>
             </div>
         </div>

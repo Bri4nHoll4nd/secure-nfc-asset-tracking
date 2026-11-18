@@ -12,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddSingleton<LatestScanService>();
+builder.Services.AddSingleton<TagSigningService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

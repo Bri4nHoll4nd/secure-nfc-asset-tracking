@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { usersApi } from "../../api/usersApi";
 
-import "./Users.css";
+import "./AdminStyling.css";
 
 export default function Users() {
     const [name, setName] = useState("");

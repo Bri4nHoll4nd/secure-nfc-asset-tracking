@@ -156,6 +156,64 @@ namespace SecureNfc.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("V1AssetRegistration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MaintenanceStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReaderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RegistrationStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SignatureHex")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Uid")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReaderId");
+
+                    b.HasIndex("Uid");
+
+                    b.ToTable("AssetRegistrations");
+                });
+
             modelBuilder.Entity("SecureNfc.Data.Models.V1.V1Asset", b =>
                 {
                     b.HasOne("SecureNfc.Data.Models.V1.V1User", "User")
